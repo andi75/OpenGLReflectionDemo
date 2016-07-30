@@ -60,24 +60,65 @@ class ReflectionDemoView : NSOpenGLView
         glEnable(GLenum(GL_LIGHTING))
         glEnable(GLenum(GL_LIGHT0))
         
+        glColorMaterial(GLenum(GL_FRONT_AND_BACK), GLenum(GL_AMBIENT_AND_DIFFUSE))
+        glEnable( GLenum(GL_COLOR_MATERIAL) )
         
         glEnable( GLenum(GL_DEPTH_TEST) )
-        
-        // glRotatef(chi, 1, 0, 0)
-        glTranslatef(0.5, 0.5, 0.5)
-        glRotatef(phi, 0, 0, 1)
-        glRotatef(chi, 1, 0, 0)
-        glTranslatef(-0.5, -0.5, -0.5)
-        glut.pushCubeGeometry()
+
         
         // draw a reflector to the stencil buffer
+        glStencilOp(GLenum(GL_KEEP), GLenum(GL_KEEP), GLenum(GL_REPLACE))
+        glStencilFunc(GLenum(GL_ALWAYS), 255, 255)
+        glEnable(GLenum(GL_STENCIL_TEST))
+        glDepthMask(GLboolean(GL_FALSE))
+        glColorMask(GLboolean(GL_FALSE), GLboolean(GL_FALSE), GLboolean(GL_FALSE), GLboolean(GL_FALSE))
+        
+        glPushMatrix()
+        setupSquareTransformation()
+        glut.pushSquareGeometry()
+        glPopMatrix()
+        
+        glColorMask(GLboolean(GL_TRUE), GLboolean(GL_TRUE), GLboolean(GL_TRUE), GLboolean(GL_TRUE))
+        glDepthMask(GLboolean(GL_TRUE))
+        glDisable(GLenum(GL_STENCIL_TEST))
+        
+        
         // setup reflection matrix
+        glPushMatrix()
+        glScalef(1, 1, -1)
+        setupCubeTransformation()
+        
         // setup clipplane
+        // TODO
+        
+        // TODO: setup light direction for the reflected object
+        
         // draw the reflected object with stencil test
+        glStencilOp(GLenum(GL_KEEP), GLenum(GL_KEEP), GLenum(GL_KEEP))
+        glStencilFunc(GLenum(GL_LESS), 0, 255)
+        glEnable(GLenum(GL_STENCIL_TEST))
+        glut.pushCubeGeometry()
+        glDisable(GLenum(GL_STENCIL_TEST))
+        glPopMatrix()
+        
         // disable clipplane
         // restore normal view matrix
+        
         // draw the reflector with blending
+        glEnable(GLenum(GL_BLEND))
+        glColor4f(1, 0, 0, 0.3)
+        glBlendFunc(GLenum(GL_SRC_ALPHA), GLenum(GL_ONE_MINUS_SRC_ALPHA))
+        glPushMatrix()
+        setupSquareTransformation()
+        glut.pushSquareGeometry()
+        glPopMatrix()
+        glDisable(GLenum(GL_BLEND))
+        
         // draw the normal object
+        glPushMatrix()
+        setupCubeTransformation()
+        glut.pushCubeGeometry()
+        glPopMatrix()
     }
     
     override func mouseDragged(theEvent: NSEvent) {
@@ -89,5 +130,21 @@ class ReflectionDemoView : NSOpenGLView
         self.chi += Float(dy) * 0.5
         
         self.needsDisplay = true
+    }
+    
+    func setupCubeTransformation()
+    {
+        glTranslatef(0, 0, 0.5);
+        // glRotatef(chi, 1, 0, 0)
+        glTranslatef(0.5, 0.5, 0.5)
+        glRotatef(chi, 1, 0, 0)
+        glRotatef(phi, 0, 0, 1)
+        glTranslatef(-0.5, -0.5, -0.5)
+    }
+    
+    func setupSquareTransformation()
+    {
+        glScalef(3.0, 3.0, 1.0)
+        glTranslatef(-0.5, -0.5, 0)
     }
 }

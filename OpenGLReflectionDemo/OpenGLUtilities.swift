@@ -19,7 +19,7 @@ let M_PI = Darwin.M_PI
 
 // sides bottom top left right are from (1.5, 0.5, 0.5) viewing in direction (-1, 0, 0)
 
-let vertices : [Float] = [
+let cubeVertices : [Float] = [
     0, 0, 0, // bottom
     0, 1, 0,
     1, 1, 0,
@@ -46,7 +46,7 @@ let vertices : [Float] = [
     0, 1, 0
 ];
 
-let normals : [Float] = [
+let cubeNormals : [Float] = [
     0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, // bottom
     0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // top
     0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // left
@@ -55,13 +55,24 @@ let normals : [Float] = [
     -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0 // back
 ]
 
-let indices : [UInt32] = [
+let cubeIndices : [UInt32] = [
     0, 1, 2, 0, 2, 3, // bottom
     4, 5, 6, 4, 6, 7, // top
     8, 9, 10, 8, 10, 11, // left
     12, 13, 14, 12, 14, 15, // right
     16, 17, 18, 16, 18, 19, // front
     20, 21, 22, 20, 22, 23 // back
+];
+
+let squasreVertices : [Float] = [
+    0, 0, 0,
+    0, 1, 0,
+    1, 1, 0,
+    1, 0, 0
+];
+
+let squareNormals : [Float] = [
+    0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1
 ];
 
 class OpenGLUtilities
@@ -78,11 +89,22 @@ class OpenGLUtilities
 
     func pushCubeGeometry()
     {
-        glVertexPointer(3, GLenum(GL_FLOAT), 0, vertices)
-        glNormalPointer(GLenum(GL_FLOAT), 0, normals)
+        glVertexPointer(3, GLenum(GL_FLOAT), 0, cubeVertices)
+        glNormalPointer(GLenum(GL_FLOAT), 0, cubeNormals)
         glEnableClientState(GLenum(GL_VERTEX_ARRAY))
         glEnableClientState(GLenum(GL_NORMAL_ARRAY))
-        glDrawElements(GLenum(GL_TRIANGLES), GLsizei(indices.count), GLenum(GL_UNSIGNED_INT), indices)
+        glDrawElements(GLenum(GL_TRIANGLES), GLsizei(cubeIndices.count), GLenum(GL_UNSIGNED_INT), cubeIndices)
+        glDisableClientState(GLenum(GL_NORMAL_ARRAY))
+        glDisableClientState(GLenum(GL_VERTEX_ARRAY))
+    }
+    
+    func pushSquareGeometry()
+    {
+        glVertexPointer(3, GLenum(GL_FLOAT), 0, squasreVertices)
+        glNormalPointer(GLenum(GL_FLOAT), 0, squareNormals)
+        glEnableClientState(GLenum(GL_VERTEX_ARRAY))
+        glEnableClientState(GLenum(GL_NORMAL_ARRAY))
+        glDrawArrays(GLenum(GL_QUADS), 0, 4)
         glDisableClientState(GLenum(GL_NORMAL_ARRAY))
         glDisableClientState(GLenum(GL_VERTEX_ARRAY))
     }
