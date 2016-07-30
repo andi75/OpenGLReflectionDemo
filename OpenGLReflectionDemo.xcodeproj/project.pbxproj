@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E11A8C971D4AA07100A186E7 /* ReflectionDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11A8C961D4AA07100A186E7 /* ReflectionDemoView.swift */; };
+		E11A8C991D4AA4DB00A186E7 /* OpenGLUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11A8C981D4AA4DB00A186E7 /* OpenGLUtilities.swift */; };
 		E12E1D7D1D4A9FC100869A6D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E1D7C1D4A9FC100869A6D /* AppDelegate.swift */; };
 		E12E1D7F1D4A9FC100869A6D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E1D7E1D4A9FC100869A6D /* ViewController.swift */; };
 		E12E1D811D4A9FC100869A6D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E12E1D801D4A9FC100869A6D /* Assets.xcassets */; };
@@ -14,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E11A8C961D4AA07100A186E7 /* ReflectionDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectionDemoView.swift; sourceTree = "<group>"; };
+		E11A8C981D4AA4DB00A186E7 /* OpenGLUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenGLUtilities.swift; sourceTree = "<group>"; };
 		E12E1D791D4A9FC100869A6D /* OpenGLReflectionDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenGLReflectionDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E12E1D7C1D4A9FC100869A6D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E12E1D7E1D4A9FC100869A6D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,6 +61,8 @@
 				E12E1D801D4A9FC100869A6D /* Assets.xcassets */,
 				E12E1D821D4A9FC100869A6D /* Main.storyboard */,
 				E12E1D851D4A9FC100869A6D /* Info.plist */,
+				E11A8C961D4AA07100A186E7 /* ReflectionDemoView.swift */,
+				E11A8C981D4AA4DB00A186E7 /* OpenGLUtilities.swift */,
 			);
 			path = OpenGLReflectionDemo;
 			sourceTree = "<group>";
@@ -131,6 +137,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E11A8C971D4AA07100A186E7 /* ReflectionDemoView.swift in Sources */,
+				E11A8C991D4AA4DB00A186E7 /* OpenGLUtilities.swift in Sources */,
 				E12E1D7F1D4A9FC100869A6D /* ViewController.swift in Sources */,
 				E12E1D7D1D4A9FC100869A6D /* AppDelegate.swift in Sources */,
 			);
@@ -275,6 +283,7 @@
 				E12E1D8A1D4A9FC100869A6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
