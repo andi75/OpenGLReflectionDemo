@@ -55,6 +55,15 @@ let cubeNormals : [Float] = [
     -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0 // back
 ]
 
+let cubeColors : [Float] = [
+    1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, // bottom: purple
+    1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // top: red
+    1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, // left: yellow
+    0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // right: green
+    0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // front: blue
+    0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1  // back: cyan
+]
+
 let cubeIndices : [UInt32] = [
     0, 1, 2, 0, 2, 3, // bottom
     4, 5, 6, 4, 6, 7, // top
@@ -64,7 +73,7 @@ let cubeIndices : [UInt32] = [
     20, 21, 22, 20, 22, 23 // back
 ];
 
-let squasreVertices : [Float] = [
+let squareVertices : [Float] = [
     0, 0, 0,
     0, 1, 0,
     1, 1, 0,
@@ -87,6 +96,13 @@ class OpenGLUtilities
         ]
     }
 
+    func pushColoredCubeGeometry()
+    {
+        glColorPointer(3, GLenum(GL_FLOAT), 0, cubeColors)
+        glEnableClientState(GLenum(GL_COLOR_ARRAY))
+        pushCubeGeometry()
+        glDisableClientState(GLenum(GL_COLOR_ARRAY))
+    }
     func pushCubeGeometry()
     {
         glVertexPointer(3, GLenum(GL_FLOAT), 0, cubeVertices)
@@ -100,7 +116,7 @@ class OpenGLUtilities
     
     func pushSquareGeometry()
     {
-        glVertexPointer(3, GLenum(GL_FLOAT), 0, squasreVertices)
+        glVertexPointer(3, GLenum(GL_FLOAT), 0, squareVertices)
         glNormalPointer(GLenum(GL_FLOAT), 0, squareNormals)
         glEnableClientState(GLenum(GL_VERTEX_ARRAY))
         glEnableClientState(GLenum(GL_NORMAL_ARRAY))

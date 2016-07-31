@@ -14,9 +14,12 @@ import GLUT
 
 class ReflectionDemoView : NSOpenGLView
 {
+    override var acceptsFirstResponder: Bool { return true }
+
     let glut = OpenGLUtilities()
     var phi : Float = 0
     var chi : Float = 0
+    var zPos : Float = 0.5
     
     override func drawRect(dirtyRect: NSRect) {
         render(width: dirtyRect.width, height: dirtyRect.height)
@@ -30,41 +33,36 @@ class ReflectionDemoView : NSOpenGLView
         
         glViewport(0, 0, GLsizei(width), GLsizei(height))
         
+        // setup lighting
+        glEnable(GLenum(GL_LIGHTING))
+        glEnable(GLenum(GL_LIGHT0))
+        glColorMaterial(GLenum(GL_FRONT_AND_BACK), GLenum(GL_AMBIENT_AND_DIFFUSE))
+        glEnable( GLenum(GL_COLOR_MATERIAL) )
+        let black : [Float] = [ 0, 0, 0, 0 ]
+        glLightModelfv(GLenum(GL_LIGHT_MODEL_AMBIENT), black)
+
+        // depth test is enabled throughout
+        glEnable( GLenum(GL_DEPTH_TEST) )
+
         // setup matrices
         glMatrixMode(GLenum(GL_PROJECTION))
-        // let proj = GLKMatrix4MakeOrtho(0, Float(terrain.width), 0, Float(terrain.height), 0, 100)
-        
-        // let proj = GLKMatrix4MakeOrtho(-d, d, -d, d, 0, 4 * d)
-        
         let d : Float = 2.0
-        
         let proj = GLKMatrix4MakePerspective( Float(M_PI) / 4.0, Float(width / height), d, 100 * d)
         glLoadMatrixf(glut.glMatrix(proj))
         
         glMatrixMode(GLenum(GL_MODELVIEW))
         glLoadIdentity()
-        let lightPos : [Float] = [0, 0, 1, 0]
-        glLightfv( GLenum(GL_LIGHT0), GLenum(GL_POSITION), lightPos  )
+
+        let eye = GLKVector3Make(0.5, 5.5, 3.5)
+        let viewPoint = GLKVector3Make(0.5, 0.5, 0.5)
+        let up = GLKVector3Make(0, 0, 1)
         
         let view = GLKMatrix4MakeLookAt(
-//            4.5, 0.5, 0.5,
-            5.0, 1.5, 3.0,
-            0.5, 0.5, 0.5,
-            0, 0, 1
+            eye.x, eye.y, eye.z,
+            viewPoint.x, viewPoint.y, viewPoint.z,
+            up.x, up.y, up.z
         )
         glLoadMatrixf(glut.glMatrix(view))
-        
-        // glPolygonMode(GLenum(GL_FRONT_AND_BACK), GLenum(GL_LINE))
-        glColor4f(1, 1, 1, 1)
-
-        glEnable(GLenum(GL_LIGHTING))
-        glEnable(GLenum(GL_LIGHT0))
-        
-        glColorMaterial(GLenum(GL_FRONT_AND_BACK), GLenum(GL_AMBIENT_AND_DIFFUSE))
-        glEnable( GLenum(GL_COLOR_MATERIAL) )
-        
-        glEnable( GLenum(GL_DEPTH_TEST) )
-
         
         // draw a reflector to the stencil buffer
         glStencilOp(GLenum(GL_KEEP), GLenum(GL_KEEP), GLenum(GL_REPLACE))
@@ -82,31 +80,36 @@ class ReflectionDemoView : NSOpenGLView
         glDepthMask(GLboolean(GL_TRUE))
         glDisable(GLenum(GL_STENCIL_TEST))
         
+        // setup clipplane
+        let plane : [Double] = [ 0, 0, -1, 0 ]
+        glClipPlane(GLenum(GL_CLIP_PLANE0), plane)
+        glEnable(GLenum(GL_CLIP_PLANE0))
         
+        // setup light direction for the reflected object
+        let lightPosReflected : [Float] = [eye.x, eye.y, -eye.z, 0]
+        glLightfv( GLenum(GL_LIGHT0), GLenum(GL_POSITION), lightPosReflected  )
+
         // setup reflection matrix
         glPushMatrix()
         glScalef(1, 1, -1)
         setupCubeTransformation()
         
-        // setup clipplane
-        // TODO
-        
-        // TODO: setup light direction for the reflected object
-        
         // draw the reflected object with stencil test
         glStencilOp(GLenum(GL_KEEP), GLenum(GL_KEEP), GLenum(GL_KEEP))
         glStencilFunc(GLenum(GL_LESS), 0, 255)
         glEnable(GLenum(GL_STENCIL_TEST))
-        glut.pushCubeGeometry()
+        glut.pushColoredCubeGeometry()
         glDisable(GLenum(GL_STENCIL_TEST))
+
+        // restore normal view matrix
         glPopMatrix()
         
         // disable clipplane
-        // restore normal view matrix
-        
+        glDisable(GLenum(GL_CLIP_PLANE0))
+
         // draw the reflector with blending
         glEnable(GLenum(GL_BLEND))
-        glColor4f(1, 0, 0, 0.3)
+        glColor4f(1, 0, 0, 0.4)
         glBlendFunc(GLenum(GL_SRC_ALPHA), GLenum(GL_ONE_MINUS_SRC_ALPHA))
         glPushMatrix()
         setupSquareTransformation()
@@ -115,9 +118,11 @@ class ReflectionDemoView : NSOpenGLView
         glDisable(GLenum(GL_BLEND))
         
         // draw the normal object
+        let lightPos : [Float] = [eye.x, eye.y, eye.z, 0]
+        glLightfv( GLenum(GL_LIGHT0), GLenum(GL_POSITION), lightPos  )
         glPushMatrix()
         setupCubeTransformation()
-        glut.pushCubeGeometry()
+        glut.pushColoredCubeGeometry()
         glPopMatrix()
     }
     
@@ -134,8 +139,7 @@ class ReflectionDemoView : NSOpenGLView
     
     func setupCubeTransformation()
     {
-        glTranslatef(0, 0, 0.5);
-        // glRotatef(chi, 1, 0, 0)
+        glTranslatef(0, 0, zPos);
         glTranslatef(0.5, 0.5, 0.5)
         glRotatef(chi, 1, 0, 0)
         glRotatef(phi, 0, 0, 1)
@@ -144,7 +148,22 @@ class ReflectionDemoView : NSOpenGLView
     
     func setupSquareTransformation()
     {
+        glTranslatef(0.5, 0.5, 0)
         glScalef(3.0, 3.0, 1.0)
         glTranslatef(-0.5, -0.5, 0)
+    }
+    
+    override func keyDown(theEvent: NSEvent) {
+        self.interpretKeyEvents([theEvent])
+    }
+    
+    override func insertText(insertString: AnyObject) {
+        switch(insertString as! String)
+        {
+        case " ": zPos += 0.1
+        case "c": zPos -= 0.1
+        default: break;
+        }
+        self.needsDisplay = true
     }
 }
